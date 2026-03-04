@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = "shanmugapriya3442/hawkins-cafe:latest"
         DOCKER_USERNAME = "shanmugapriya3442"
-        DOCKER_PASSWORD = "<your-docker-password>"  // Replace with your Docker Hub password
+        DOCKER_PASSWORD = "<thirumurugan>"  // Replace with your Docker Hub password
     }
 
     stages {
@@ -17,7 +17,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    bat 'docker build -t %IMAGE_NAME% ./client'
+                    bat 'docker build -t shanmugapriya3442/hawkins-cafe:latest ./client'
                 }
             }
         }
@@ -29,8 +29,8 @@ pipeline {
                     bat 'docker context use default'
                     
                     // Docker login and push
-                    bat 'docker login -u %DOCKER_USERNAME% -p %DOCKER_PASSWORD%'
-                    bat 'docker push %IMAGE_NAME%'
+                    bat 'docker login -u shanmugapriya3442 -p thirumurugan'
+                    bat 'docker push shanmugapriya3442/hawkins-cafe:latest'
                 }
             }
         }
