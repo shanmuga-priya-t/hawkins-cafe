@@ -30,16 +30,15 @@ pipeline {
             }
         }
 
-        stage('Push Docker Image') {
-            steps {
-                script {
-                    // Docker Hub login and push using credentials
-                    withDockerRegistry([credentialsId: "%DOCKER_CREDENTIALS%", url: 'https://index.docker.io/v1/']) {
-                        bat "docker push %DOCKER_IMAGE%"
-                    }
-                }
+      stage('Push Docker Image') {
+    steps {
+        script {
+            withDockerRegistry([credentialsId: 'dockerhub-cred', url: 'https://index.docker.io/v1/']) {
+                bat 'docker push shanmugapriya3442/hawkins-cafe:latest'
             }
         }
+    }
+}
 
         stage('Deploy to AWS') {
             steps {
