@@ -2,64 +2,54 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "shanmugapriya3442/hawkins-cafe:latest"
-        DOCKER_CREDENTIALS = "dockerhub-cred" // Jenkins maadhiri Docker Hub credentials id
-        AWS_CREDENTIALS = "aws-cred"          // AWS credentials id
-        AWS_REGION = "ap-south-1"             // AWS region
-        ECR_REPO = "hawkins-cafe"             // AWS ECR repository name
+        IMAGE_NAME = "shanmugapriya3442/hawkins-cafe:latest"
+        DOCKER_USERNAME = "shanmugapriya3442"
+        DOCKER_PASSWORD = "<your-docker-password>"  // Replace with your Docker Hub password
     }
 
     stages {
-
         stage('Checkout SCM') {
             steps {
-                // Windows-compatible git checkout
-                checkout([$class: 'GitSCM', 
-                          branches: [[name: '*/main']],
-                          userRemoteConfigs: [[url: 'https://github.com/shanmuga-priya-t/hawkins-cafe.git']]
-                ])
+                git branch: 'main', url: 'https://github.com/shanmuga-priya-t/hawkins-cafe.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Windows-compatible command
-                    bat "docker build -t %DOCKER_IMAGE% ./client"
+                    bat 'docker build -t %IMAGE_NAME% ./client'
                 }
             }
         }
 
-     stage('Push Docker Image') {
-    steps {
-        script {
-            // Use default context
-            bat 'docker context use default'
-            
-            // Push image
-            bat 'docker login -u shanmugapriya3442 -p <thirumurugan>'
-            bat 'docker push shanmugapriya3442/hawkins-cafe:latest'
-        }
-    }
-}
-        stage('Deploy to AWS') {
+        stage('Push Docker Image') {
             steps {
                 script {
-                    echo "AWS deploy stage placeholder"
-                    // idhu laam unga AWS deploy commands use pannunga
-                    // Example:
-                    // bat "aws ecs update-service --cluster myCluster --service myService --force-new-deployment --region %AWS_REGION%"
+                    // Use default Docker context
+                    bat 'docker context use default'
+                    
+                    // Docker login and push
+                    bat 'docker login -u %DOCKER_USERNAME% -p %DOCKER_PASSWORD%'
+                    bat 'docker push %IMAGE_NAME%'
                 }
+            }
+        }
+
+        stage('Deploy to AWS') {
+            steps {
+                echo "AWS Deploy stage placeholder – add your commands here"
+                // Example:
+                // bat 'aws ecs update-service ...'
             }
         }
     }
 
     post {
         success {
-            echo "Pipeline completed successfully!"
+            echo 'Pipeline completed successfully!'
         }
         failure {
-            echo "Pipeline failed. Check logs!"
+            echo 'Pipeline failed. Check logs!'
         }
     }
 }
