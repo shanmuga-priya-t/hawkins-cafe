@@ -3,21 +3,29 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "shanmugapriya3442/hawkins-cafe:latest"
-        DOCKER_CREDENTIALS = "dockerhub-cred"
+        DOCKER_CREDENTIALS = "dockerhub-cred" // Jenkins maadhiri Docker Hub credentials id
+        AWS_CREDENTIALS = "aws-cred"          // AWS credentials id
+        AWS_REGION = "ap-south-1"             // AWS region
+        ECR_REPO = "hawkins-cafe"             // AWS ECR repository name
     }
 
     stages {
 
-        stage('Checkout') {
+        stage('Checkout SCM') {
             steps {
-                git url: 'https://github.com/shanmuga-priya-t/hawkins-cafe.git', branch: 'main'
+                // Windows-compatible git checkout
+                checkout([$class: 'GitSCM', 
+                          branches: [[name: '*/main']],
+                          userRemoteConfigs: [[url: 'https://github.com/shanmuga-priya-t/hawkins-cafe.git']]
+                ])
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh "docker build -t ${DOCKER_IMAGE} ./client"
+                    // Windows-compatible command
+                    bat "docker build -t %DOCKER_IMAGE% ./client"
                 }
             }
         }
@@ -25,8 +33,9 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    withDockerRegistry([credentialsId: "${DOCKER_CREDENTIALS}", url: 'https://index.docker.io/v1/']) {
-                        sh "docker push ${DOCKER_IMAGE}"
+                    // Docker Hub login and push using credentials
+                    withDockerRegistry([credentialsId: "%DOCKER_CREDENTIALS%", url: 'https://index.docker.io/v1/']) {
+                        bat "docker push %DOCKER_IMAGE%"
                     }
                 }
             }
@@ -34,9 +43,22 @@ pipeline {
 
         stage('Deploy to AWS') {
             steps {
-                echo 'AWS deploy step - add your deployment commands here'
+                script {
+                    echo "AWS deploy stage placeholder"
+                    // idhu laam unga AWS deploy commands use pannunga
+                    // Example:
+                    // bat "aws ecs update-service --cluster myCluster --service myService --force-new-deployment --region %AWS_REGION%"
+                }
             }
         }
+    }
 
-    } // stages
-} // pipeline
+    post {
+        success {
+            echo "Pipeline completed successfully!"
+        }
+        failure {
+            echo "Pipeline failed. Check logs!"
+        }
+    }
+}
