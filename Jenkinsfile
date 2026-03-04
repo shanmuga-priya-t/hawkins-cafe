@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "shanmugapriya3442/hawkins-cafe:latest"
-        DOCKER_CREDENTIALS = "db2a4830-5f69-43ab-ad82-95107b7bcfa4" // Jenkins maadhiri Docker Hub credentials id
+        DOCKER_CREDENTIALS = "dockerhub-cred" // Jenkins maadhiri Docker Hub credentials id
         AWS_CREDENTIALS = "aws-cred"          // AWS credentials id
         AWS_REGION = "ap-south-1"             // AWS region
         ECR_REPO = "hawkins-cafe"             // AWS ECR repository name
