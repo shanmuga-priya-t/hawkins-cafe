@@ -30,16 +30,18 @@ pipeline {
             }
         }
 
-      stage('Push Docker Image') {
+     stage('Push Docker Image') {
     steps {
         script {
-            withDockerRegistry([credentialsId: 'dockerhub-cred', url: 'https://index.docker.io/v1/']) {
-                bat 'docker push shanmugapriya3442/hawkins-cafe:latest'
-            }
+            // Use default context
+            bat 'docker context use default'
+            
+            // Push image
+            bat 'docker login -u shanmugapriya3442 -p <thirumurugan>'
+            bat 'docker push shanmugapriya3442/hawkins-cafe:latest'
         }
     }
 }
-
         stage('Deploy to AWS') {
             steps {
                 script {
